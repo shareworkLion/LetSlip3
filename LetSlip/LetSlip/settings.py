@@ -1,7 +1,6 @@
 from pathlib import Path
 import pymysql
 import os
-from .my_settings import myDATABASES, mySECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,17 +11,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = mySECRET_KEY
+SECRET_KEY = 'django-insecure-l22buoa!=vhp01h)%@57$9he^mn&v#q*0yu3r*55of0!uzcfy$'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".cloudtype.app"]
 CSRF_TRUSTED_ORIGINS = ['https://*.cloudtype.app']
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'LsApp',
     'accounts',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -43,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'LetSlip.urls'
@@ -70,7 +76,17 @@ WSGI_APPLICATION = 'LetSlip.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 pymysql.install_as_MySQLdb()
 
-DATABASES = myDATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'letsslipdb',
+        'USER': 'letsslip',
+        'PASSWORD': 'LetsSlip1234!',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    }
+}
+
 
 
 # Password validation
@@ -113,6 +129,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 import os
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
