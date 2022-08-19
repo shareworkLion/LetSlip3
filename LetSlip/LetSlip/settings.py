@@ -1,5 +1,6 @@
 from pathlib import Path
 import pymysql
+import os
 from .my_settings import myDATABASES, mySECRET_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -18,6 +19,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".cloudtype.app"]
+CSRF_TRUSTED_ORIGINS = ['https://*.cloudtype.app']
 
 # Application definition
 
