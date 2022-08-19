@@ -1,0 +1,192 @@
+{% load static %}
+<!-- 검색 결과 화면 -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MY PAGE</title>
+
+    <!-- BOOTSTRAP -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- GOOGLE ICON -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- RESET CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css"
+    />
+
+    <link rel="stylesheet" href="{% static 'css/search_success.css' %}" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <ul class="nav justify-content-center pt-1 pb-1">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="btnLogo"
+          aria-current="page"
+          href="{% url 'index' %}"
+        >
+          <img src="{% static 'img/Logo.png' %}" alt="Let's Slip" />
+        </a>
+      </li>
+      <li class="nav-item aboutus">
+        <a class="nav-link" id="toAboutUs" href="./html/aboutUs.html">
+          <img src="{% static 'img/Button/Btn_toAboutUs.png' %}" alt="" />
+        </a>
+      </li>
+      <div class="inputWrapper">
+        <form action="{% url 'search' %}" method="POST" class="form-control me-2">
+            {% csrf_token %}
+            <input
+              class="form-control me-2"
+              type="search"
+              name="searched"
+              value="{{searched}}"
+              id="search-box"
+              placeholder="다양한 Slip을 검색하며 실패를 즐기세요!"
+              aria-label="Search"
+              onkeypress="javascript:if(event.keyCode==13) {btnSearchClicked()}"
+            />
+            <button class="material-icons btnSearch" type="submit" id="search-box" onclick="wow()">
+              search
+            </button>
+          </form>
+      </div>
+      <li class="nav-item">
+        <a
+          class="mt-1 nav-link"
+          id="btnToMyGalleryRainbow"
+          href="{% url 'slipComments' %}"
+        >
+          <img src="{% static 'img/Button/Btn_toMyGallery.png' %}" alt="" />
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="mt-1 nav-link" id="btnOpenGallery" href="{% url 'myPage1' %}">
+          <img src="{% static 'img/Button/Btn_openGallery.png' %}" alt="" />
+        </a>
+      </li>
+    </ul>
+    <!-- MY PAGE MAIN SECTION -->
+    <section class="searchSuccess">
+      <div class="pt-5 pb-3 searchSuccessHeader text-center">
+        <p>'{{ keyword }}'에 대한 {{ posts.count }}개의 검색 결과 입니다.</p>
+      </div>
+      <tbody>
+      {% for post in posts.all %}
+      <hr size="4px" color="black" />
+      <ul class="list-group m-5">
+        <li class="listItem mb-5">
+          <div class="resultImg">
+            {% if post.b_img %}
+            <img src = "{{ post.b_img.url }}" alt="" height="200">
+            {% endif %}
+            <!--<img src="{% static 'img/SearchSuccessResult_01.png' %}" />-->
+            <div class="profile">
+              <span>{{ post.user.username }}</span> <!--작성자-->
+              <span> | </span>
+              <span style="color: rgb(149, 149, 149)"> {{ post.regdate|date:'Y.m.d' }}</span>
+            </div>
+          </div>
+          <div class="resultText">
+            <hr size="4px" color="black" />
+            <p class="resultTitle">
+              <span><img src="{% static 'img/Tag_Com.png' %}" /></span>
+              <span> <a href = "{% url 'post_detail' post.b_no %}">{{ post.b_name }}</span>
+            </p>
+            <p class="reulstTitle2">당신의 Slip을 들려주세요</p>
+            <p class="">
+              {{ post.b_intro1 }}{{ post.b_intro2 }}{{ post.b_intro3 }}
+            </p>
+          </div>
+        </li>
+      </ul>
+      {% endfor %}
+    </tbody>
+    </section>
+
+    <section class="page mt-5 mb-5">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          {% if posts.has_previous %}
+          <a href = "?page={{posts.previous_page_number}}">이전</a>
+          {% else %}
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+          {% endif %}
+        </li>
+
+        
+        <li class="page-item">
+        <!-- 페이지리스트 -->
+        {% for page_number in posts.paginator.page_range %}
+            {% if page_number == posts.number %}
+            <a href="?&page={{ page_number }}">{{ page_number }}</a>
+            {% else %}
+            <a href="?&page={{ page_number }}">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}          
+        </li>
+
+        <li class="page-item">
+          <!-- 다음페이지 -->
+          {% if posts.has_next %}
+          <a href = "?page={{ posts.next_page_number }}">다음</a>
+          {% else %}
+          <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+          {% endif %}
+        </li>
+      </ul>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="w-75 m-auto bigWrapper">
+        <div class="smallWrapper">
+          <div class="container1">
+            <img src="{% static 'img/Logo.png' %}" alt="." />
+            <p>실패를 전시하는 갤러리</p>
+          </div>
+          <div class="container2">
+            <div class="container3">
+              <a href="javascript:void">이용약관</a>
+              <a href="javascript:void">이용안내</a>
+              <a href="javascript:void">운영정책</a>
+            </div>
+            <p>서울시 노원구 화랑로 621</p>
+          </div>
+        </div>
+        <hr />
+        <a href="javascript:void">
+          <img id="instagram" src="{% static 'img/Button/Btn_Insta.png' %}" alt="" />
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>
